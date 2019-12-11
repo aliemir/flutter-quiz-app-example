@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+
+import './quiz.dart';
+import './result.dart';
 
 void main() {
   runApp(App());
@@ -14,42 +15,86 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  var _score = 0;
   var _questionIndex = 0;
   final questions = [
     {
       'questionText': 'Whats your favorite color ?',
       'answers': [
-        'Black',
-        'Red',
-        'Green',
-        'White',
+        {
+          'text': 'Black',
+          'score': 10,
+        },
+        {
+          'text': 'Red',
+          'score': 6,
+        },
+        {
+          'text': 'Green',
+          'score': 3,
+        },
+        {
+          'text': 'White',
+          'score': 0,
+        },
       ],
     },
     {
       'questionText': 'Whats your favorite animal ?',
       'answers': [
-        'Rabbit',
-        'Cat',
-        'Dog',
-        'Fish',
+        {
+          'text': 'Snake',
+          'score': 10,
+        },
+        {
+          'text': 'Fish',
+          'score': 6,
+        },
+        {
+          'text': 'Dog',
+          'score': 3,
+        },
+        {
+          'text': 'Cat',
+          'score': 0,
+        },
       ],
     },
     {
       'questionText': 'Whats your favorite number ?',
       'answers': [
-        'One',
-        'Two',
-        'Three',
-        'Four',
+        {
+          'text': 'Ten',
+          'score': 10,
+        },
+        {
+          'text': 'Six',
+          'score': 6,
+        },
+        {
+          'text': 'Three',
+          'score': 3,
+        },
+        {
+          'text': 'Zero',
+          'score': 0,
+        },
       ],
     },
   ];
 
-  void _answerQuestion() {
+  void _answerQuestion(int answerScore) {
     setState(() {
+      _score += answerScore;
       _questionIndex++;
     });
-    print('Answer chosen');
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _score = 0;
+      _questionIndex = 0;
+    });
   }
 
   @override
@@ -69,20 +114,15 @@ class _AppState extends State<App> {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: Column(
-            children: <Widget>[
-              Question(
-                questionText: questions[_questionIndex]['questionText'],
-              ),
-              ...(questions[_questionIndex]['answers'] as List<String>)
-                  .map((answer) {
-                return new Answer(
-                  text: answer,
+          child: _questionIndex < questions.length
+              ? Quiz(
+                  question: questions[_questionIndex],
                   onPressed: _answerQuestion,
-                );
-              }).toList(),
-            ],
-          ),
+                )
+              : Result(
+                  score: _score,
+                  resetHandler: _resetQuiz,
+                ),
         ),
       ),
     );
